@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Task } from './tasks.model';
 import { nanoid } from 'nanoid';
 import { CreateTaskDTO } from './dto/create-task.dto';
@@ -32,6 +32,7 @@ export class TasksService {
 
   getTaskById(id: string) {
     const task = this.tasks.find(task => task.id === id);
+    if (!task) throw new NotFoundException('id could not be found in Tasks');
     return task;
   }
 
@@ -48,14 +49,17 @@ export class TasksService {
   }
 
   deleteTaskById(id: string) {
-    this.tasks = this.tasks.filter(task => task.id !== id);
+    const selectedTask = this.getTaskById(id);
+    this.tasks = this.tasks.filter(task => task.id !== selectedTask.id);
   }
 
   updateTaskById(id: string, updateTaskDTO: UpdateTaskDTO) {
+    const selectedTask = this.getTaskById(id);
+    const updatedTask = Object.assign({}, selectedTask, updateTaskDTO);
     this.tasks = this.tasks.map(task => {
-      if (task.id !== id) return task;
-      return Object.assign({}, task, updateTaskDTO);
+      if (task.id !== selectedTask.id) return task;
+      return updatedTask;
     });
-    return this.tasks.find(task => task.id === id);
+    return updatedTask;
   }
 }
