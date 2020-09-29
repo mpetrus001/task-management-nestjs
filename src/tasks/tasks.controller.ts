@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -20,16 +21,16 @@ import { TasksService } from './tasks.service';
 export class TasksController {
   constructor(private tasksService: TasksService) {}
 
-  @Get()
-  getTasks(@Query(ValidationPipe) filterDTO: GetTasksFilterDTO) {
-    if (Object.keys(filterDTO).length) {
-      return this.tasksService.getTasksWithFilters(filterDTO);
-    }
-    return this.tasksService.getAllTasks();
-  }
+  // @Get()
+  // getTasks(@Query(ValidationPipe) filterDTO: GetTasksFilterDTO) {
+  //   if (Object.keys(filterDTO).length) {
+  //     return this.tasksService.getTasksWithFilters(filterDTO);
+  //   }
+  //   return this.tasksService.getAllTasks();
+  // }
 
   @Get('/:id')
-  getTaskById(@Param('id') id: string) {
+  getTaskById(@Param('id', ParseIntPipe) id: number) {
     return this.tasksService.getTaskById(id);
   }
 
@@ -41,14 +42,14 @@ export class TasksController {
 
   @Patch('/:id')
   updateTaskById(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body(TaskStatusValidationPipe) updateTaskDTO: UpdateTaskDTO,
   ) {
     return this.tasksService.updateTaskById(id, updateTaskDTO);
   }
 
   @Delete('/:id')
-  deleteTaskById(@Param('id') id: string) {
+  deleteTaskById(@Param('id', ParseIntPipe) id: number) {
     return this.tasksService.deleteTaskById(id);
   }
 }

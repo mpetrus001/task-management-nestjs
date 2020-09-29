@@ -1,7 +1,7 @@
-import { TaskStatus } from '../tasks.model';
+import { Task } from '../tasks.entity';
 
 export class UpdateTaskDTO {
   title?: string;
   description?: string;
-  status?: TaskStatus;
+  status?: Task['status'];
 }
