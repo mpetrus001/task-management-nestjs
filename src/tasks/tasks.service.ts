@@ -12,8 +12,8 @@ export class TasksService {
     @InjectRepository(TasksRepository) private tasksRepository: TasksRepository,
   ) {}
 
-  async getTasks(filterDTO: GetTasksFilterDTO) {
-    return await this.tasksRepository.getTasks(filterDTO);
+  getTasks(filterDTO: GetTasksFilterDTO) {
+    return this.tasksRepository.getTasks(filterDTO);
   }
 
   async getTaskById(id: number) {
@@ -22,7 +22,7 @@ export class TasksService {
     return task;
   }
 
-  async createTask(createTaskDTO: CreateTaskDTO) {
+  createTask(createTaskDTO: CreateTaskDTO) {
     return this.tasksRepository.createTask(createTaskDTO);
   }
 
