@@ -11,23 +11,10 @@ export class TasksService {
   constructor(
     @InjectRepository(TasksRepository) private tasksRepository: TasksRepository,
   ) {}
-  // getAllTasks() {
-  //   return this.tasks;
-  // }
-  // getTasksWithFilters(filterDTO: GetTasksFilterDTO) {
-  //   const { status, search } = filterDTO;
-  //   let selectedTasks = this.getAllTasks();
-  //   if (status) {
-  //     selectedTasks = selectedTasks.filter(task => task.status === status);
-  //   }
-  //   if (search) {
-  //     selectedTasks = selectedTasks.filter(
-  //       task =>
-  //         task.title.includes(search) || task.description.includes(search),
-  //     );
-  //   }
-  //   return selectedTasks;
-  // }
+
+  async getTasks(filterDTO: GetTasksFilterDTO) {
+    return await this.tasksRepository.getTasks(filterDTO);
+  }
 
   async getTaskById(id: number) {
     const task = await this.tasksRepository.findOne(id);

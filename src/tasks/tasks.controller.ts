@@ -21,13 +21,10 @@ import { TasksService } from './tasks.service';
 export class TasksController {
   constructor(private tasksService: TasksService) {}
 
-  // @Get()
-  // getTasks(@Query(ValidationPipe) filterDTO: GetTasksFilterDTO) {
-  //   if (Object.keys(filterDTO).length) {
-  //     return this.tasksService.getTasksWithFilters(filterDTO);
-  //   }
-  //   return this.tasksService.getAllTasks();
-  // }
+  @Get()
+  getTasks(@Query(ValidationPipe) filterDTO: GetTasksFilterDTO) {
+    return this.tasksService.getTasks(filterDTO);
+  }
 
   @Get('/:id')
   getTaskById(@Param('id', ParseIntPipe) id: number) {
