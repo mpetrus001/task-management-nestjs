@@ -10,6 +10,7 @@ import { AuthCredentialsDTO } from './dto/auth-credentials.dto';
 
 @Controller('auth')
 export class AuthController {
+  // TODO add logging
   constructor(private authService: AuthService) {}
 
   @Post('/signup')

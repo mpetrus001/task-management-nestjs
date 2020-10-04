@@ -5,6 +5,7 @@ import { TasksModule } from './tasks/tasks.module';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
+  // TODO implement env variables for TypeOrmConfig
   imports: [TypeOrmModule.forRoot(typeOrmConfig), TasksModule, AuthModule],
 })
 export class AppModule {}

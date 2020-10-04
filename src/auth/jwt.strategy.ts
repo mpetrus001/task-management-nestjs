@@ -12,9 +12,11 @@ export class JwtStrategy extends PassportStrategy(JWT) {
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      // TODO implement env variable for Jwt secret
       secretOrKey: 'sophie-love',
     });
   }
+  // TODO add logging
 
   async validate({ email }: JwtPayload) {
     const user = await this.usersRepository.findOne({ email });

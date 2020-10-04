@@ -10,6 +10,7 @@ import { UsersRepository } from './users.repository';
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
+    // TODO implement env variables for JwtModule config
     JwtModule.register({
       secret: 'sophie-love',
       signOptions: {

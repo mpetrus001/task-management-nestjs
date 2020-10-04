@@ -9,6 +9,7 @@ import * as Crypt from 'argon2';
 
 @EntityRepository(User)
 export class UsersRepository extends Repository<User> {
+  // TODO add logging
   async signUp(authCredentialsDTO: AuthCredentialsDTO) {
     const { email, password } = authCredentialsDTO;
     const user = new User();

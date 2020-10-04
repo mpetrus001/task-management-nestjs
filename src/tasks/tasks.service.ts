@@ -11,6 +11,7 @@ export class TasksService {
   constructor(
     @InjectRepository(TasksRepository) private tasksRepository: TasksRepository,
   ) {}
+  // TODO add logging
 
   getTasks(filterDTO: GetTasksFilterDTO, user: User) {
     return this.tasksRepository.getTasks(filterDTO, user);

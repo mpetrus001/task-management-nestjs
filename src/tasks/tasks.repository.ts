@@ -8,6 +8,8 @@ import { Task } from './tasks.entity';
 @EntityRepository(Task)
 export class TasksRepository extends Repository<Task> {
   private logger = new Logger('TasksRepository');
+  // TODO expand logging
+
   async getTasks(filterDTO: GetTasksFilterDTO, user: User) {
     const { status, search } = filterDTO;
     const query = this.createQueryBuilder('task');

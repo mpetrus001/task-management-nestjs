@@ -27,6 +27,7 @@ import { TasksService } from './tasks.service';
 export class TasksController {
   constructor(private tasksService: TasksService) {}
   private logger = new Logger('TasksController');
+  // TODO expand logging
 
   @Get()
   getTasks(

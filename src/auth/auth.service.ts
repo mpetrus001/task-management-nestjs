@@ -10,6 +10,7 @@ export class AuthService {
     @InjectRepository(UsersRepository) private usersRepository: UsersRepository,
     private jwtService: JwtService,
   ) {}
+  // TODO expand logging
   private logger = new Logger('AuthService');
 
   signUp(authCredentialsDTO: AuthCredentialsDTO) {
