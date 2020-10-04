@@ -13,6 +13,8 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { GetUserFromReq } from 'src/auth/decorator/get-user.decorator';
+import { User } from 'src/auth/users.entity';
 import { CreateTaskDTO } from './dto/create-task.dto';
 import { GetTasksFilterDTO } from './dto/get-tasks-filter.dto';
 import { UpdateTaskDTO } from './dto/update-task.dto';
@@ -25,31 +27,44 @@ export class TasksController {
   constructor(private tasksService: TasksService) {}
 
   @Get()
-  getTasks(@Query(ValidationPipe) filterDTO: GetTasksFilterDTO) {
-    return this.tasksService.getTasks(filterDTO);
+  getTasks(
+    @Query(ValidationPipe) filterDTO: GetTasksFilterDTO,
+    @GetUserFromReq() user: User,
+  ) {
+    return this.tasksService.getTasks(filterDTO, user);
   }
 
   @Get('/:id')
-  getTaskById(@Param('id', ParseIntPipe) id: number) {
-    return this.tasksService.getTaskById(id);
+  getTaskById(
+    @Param('id', ParseIntPipe) id: number,
+    @GetUserFromReq() user: User,
+  ) {
+    return this.tasksService.getTaskById(id, user);
   }
 
   @Post()
   @UsePipes(ValidationPipe)
-  createTask(@Body() createTaskDTO: CreateTaskDTO) {
-    return this.tasksService.createTask(createTaskDTO);
+  createTask(
+    @Body() createTaskDTO: CreateTaskDTO,
+    @GetUserFromReq() user: User,
+  ) {
+    return this.tasksService.createTask(createTaskDTO, user);
   }
 
   @Patch('/:id')
   updateTaskById(
     @Param('id', ParseIntPipe) id: number,
     @Body(TaskStatusValidationPipe) updateTaskDTO: UpdateTaskDTO,
+    @GetUserFromReq() user: User,
   ) {
-    return this.tasksService.updateTaskById(id, updateTaskDTO);
+    return this.tasksService.updateTaskById(id, updateTaskDTO, user);
   }
 
   @Delete('/:id')
-  deleteTaskById(@Param('id', ParseIntPipe) id: number) {
-    return this.tasksService.deleteTaskById(id);
+  deleteTaskById(
+    @Param('id', ParseIntPipe) id: number,
+    @GetUserFromReq() user: User,
+  ) {
+    return this.tasksService.deleteTaskById(id, user);
   }
 }
