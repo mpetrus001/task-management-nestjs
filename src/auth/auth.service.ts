@@ -21,13 +21,17 @@ export class AuthService {
     const result = await this.usersRepository.validateUserPassword(
       authCredentialsDTO,
     );
+    if (!result)
+      this.logger.warn(
+        `Attempted signIn failed with dto ${JSON.stringify(
+          authCredentialsDTO,
+        )}`,
+      );
     if (!result) throw new UnauthorizedException('Invalid credentials');
     const { email } = result;
     const payload = { email };
     const token = await this.jwtService.sign(payload);
-    this.logger.debug(
-      `Generated token with payload ${JSON.stringify(payload)}`,
-    );
+    this.logger.log(`Generated token with payload ${JSON.stringify(payload)}`);
 
     return { token };
   }

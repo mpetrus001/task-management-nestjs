@@ -20,7 +20,7 @@ export class AuthController {
 
   @Post('/signin')
   @HttpCode(200)
-  signIn(@Body(ValidationPipe) authCredentialsDTO: AuthCredentialsDTO) {
+  signIn(@Body() authCredentialsDTO: AuthCredentialsDTO) {
     return this.authService.signIn(authCredentialsDTO);
   }
 }
