@@ -34,11 +34,6 @@ export class TasksController {
     @Query(ValidationPipe) filterDTO: GetTasksFilterDTO,
     @GetUserFromReq() user: User,
   ) {
-    this.logger.verbose(
-      `User ${user.email} retrieving tasks with filter ${JSON.stringify(
-        filterDTO,
-      )}`,
-    );
     return this.tasksService.getTasks(filterDTO, user);
   }
 
