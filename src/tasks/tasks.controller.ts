@@ -14,8 +14,8 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { GetUserFromReq } from 'src/auth/decorator/get-user.decorator';
-import { User } from 'src/auth/users.entity';
+import { GetUserFromReq } from '../auth/decorator/get-user.decorator';
+import { User } from '../auth/users.entity';
 import { CreateTaskDTO } from './dto/create-task.dto';
 import { GetTasksFilterDTO } from './dto/get-tasks-filter.dto';
 import { UpdateTaskDTO } from './dto/update-task.dto';

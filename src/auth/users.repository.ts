@@ -12,7 +12,7 @@ export class UsersRepository extends Repository<User> {
   // TODO add logging
   async signUp(authCredentialsDTO: AuthCredentialsDTO) {
     const { email, password } = authCredentialsDTO;
-    const user = new User();
+    const user = this.create();
     user.email = email;
     try {
       const hashedPassword = await Crypt.hash(password);
@@ -31,7 +31,7 @@ export class UsersRepository extends Repository<User> {
   async validateUserPassword(authcredentialsDTO: AuthCredentialsDTO) {
     const { email, password } = authcredentialsDTO;
     const user = await this.findOne({ email });
-    if (!user) return false;
+    if (!user) return null;
     try {
       const isMatch = await Crypt.verify(user.password, password);
       if (isMatch) return user;
