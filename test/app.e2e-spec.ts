@@ -61,7 +61,7 @@ describe('AppController (e2e)', () => {
         .get('/tasks')
         .set('Authorization', `Bearer ${token}`)
         .expect(200);
-      const currentTasks = JSON.parse(getRes2.text);
+      let currentTasks = JSON.parse(getRes2.text);
 
       expect(currentTasks.length).toBe(originalTasks.length + 1);
       expect(currentTasks.find(task => task.id === newTask.id)).toBeTruthy();
@@ -72,6 +72,26 @@ describe('AppController (e2e)', () => {
         .expect(200);
       const taskById = JSON.parse(getRes3.text);
       expect(taskById.title).toBe(mockTaskDTO.title);
+
+      const getRes4 = await request(app.getHttpServer())
+        .patch(`/tasks/${newTask.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({ description: 'updated task description' })
+        .expect(200);
+      const updatedTask = JSON.parse(getRes4.text);
+      expect(updatedTask.description).toBe('updated task description');
+
+      await request(app.getHttpServer())
+        .delete(`/tasks/${newTask.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+
+      const getRes5 = await request(app.getHttpServer())
+        .get('/tasks')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+      currentTasks = JSON.parse(getRes5.text);
+      expect(currentTasks.length).toBe(originalTasks.length);
     });
   });
 
