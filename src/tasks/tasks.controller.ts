@@ -3,13 +3,13 @@ import {
   Controller,
   Delete,
   Get,
-  Logger,
   Param,
   ParseIntPipe,
   Patch,
   Post,
   Query,
   UseGuards,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -19,15 +19,15 @@ import { User } from '../auth/users.entity';
 import { CreateTaskDTO } from './dto/create-task.dto';
 import { GetTasksFilterDTO } from './dto/get-tasks-filter.dto';
 import { UpdateTaskDTO } from './dto/update-task.dto';
+import { LoggingInterceptor } from './interceptor/logging.interceptor';
 import { TaskStatusValidationPipe } from './pipe/task-status-validation.pipe';
 import { TasksService } from './tasks.service';
 
 @Controller('tasks')
 @UseGuards(AuthGuard())
+@UseInterceptors(LoggingInterceptor)
 export class TasksController {
   constructor(private tasksService: TasksService) {}
-  private logger = new Logger('TasksController');
-  // TODO expand logging
 
   @Get()
   getTasks(
@@ -51,11 +51,6 @@ export class TasksController {
     @Body() createTaskDTO: CreateTaskDTO,
     @GetUserFromReq() user: User,
   ) {
-    this.logger.verbose(
-      `User ${user.email} creating a task with data ${JSON.stringify(
-        createTaskDTO,
-      )}`,
-    );
     return this.tasksService.createTask(createTaskDTO, user);
   }
 

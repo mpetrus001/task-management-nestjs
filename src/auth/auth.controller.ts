@@ -3,14 +3,16 @@ import {
   Controller,
   HttpCode,
   Post,
+  UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthCredentialsDTO } from './dto/auth-credentials.dto';
+import { LoggingInterceptor } from './interceptor/logging.interceptor';
 
 @Controller('auth')
+@UseInterceptors(LoggingInterceptor)
 export class AuthController {
-  // TODO add logging
   constructor(private authService: AuthService) {}
 
   @Post('/signup')

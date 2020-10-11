@@ -1,7 +1,6 @@
 import { IsEmail, IsString, Matches, MinLength } from 'class-validator';
 
 export class AuthCredentialsDTO {
-  // TODO consider validating this input within Repo
   @IsEmail()
   email: string;
 
