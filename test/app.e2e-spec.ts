@@ -3,105 +3,81 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { UsersRepository } from '../src/auth/users.repository';
-
-const mockUsersRepository = {
-  signUp: jest.fn(),
-  validateUserPassword: jest.fn(),
-};
-
-const mockCredentials = {
-  email: 'testUser@computer.local',
-  password: 'MynewP4ssword',
-};
+import { TasksRepository } from '../src/tasks/tasks.repository';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
+  let usersRepository: UsersRepository;
+  let tasksRepository: TasksRepository;
+  const mockCredentials = {
+    email: 'testUser@computer.local',
+    password: 'ag00dPassword',
+  };
+  const mockTaskDTO = {
+    title: 'test task',
+    description: 'added during testing',
+  };
 
-  beforeEach(async () => {
-    mockUsersRepository.signUp.mockClear();
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-    })
-      .overrideProvider(UsersRepository)
-      .useValue(mockUsersRepository)
-      .compile();
+    }).compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
+    usersRepository = await moduleFixture.get(UsersRepository);
+    tasksRepository = await moduleFixture.get(TasksRepository);
   });
 
-  describe('/auth', () => {
-    describe('/signup (POST)', () => {
-      test('it succeeds with valid dto', async () => {
-        mockUsersRepository.signUp.mockResolvedValue(mockCredentials);
-        await request(app.getHttpServer())
-          .post('/auth/signup')
-          .send(mockCredentials)
-          .expect(201);
-
-        expect(mockUsersRepository.signUp).toHaveBeenCalledWith(
-          mockCredentials,
-        );
-      });
-      test('it fails if dto is invalid', async () => {
-        mockUsersRepository.signUp.mockResolvedValue(mockCredentials);
-        await request(app.getHttpServer())
-          .post('/auth/signup')
-          .send({ email: 'invalidEmail', password: mockCredentials.password })
-          .expect(400);
-        await request(app.getHttpServer())
-          .post('/auth/signup')
-          .send({ email: mockCredentials.email, password: 'invalidpassword' })
-          .expect(400);
-        await request(app.getHttpServer())
-          .post('/auth/signup')
-          .send({ email: mockCredentials.email })
-          .expect(400);
-        await request(app.getHttpServer())
-          .post('/auth/signup')
-          .send({ password: mockCredentials.password })
-          .expect(400);
-        await request(app.getHttpServer())
-          .post('/auth/signup')
-          .send({})
-          .expect(400);
-
-        expect(mockUsersRepository.signUp).not.toHaveBeenCalled();
-      });
+  describe('happy path', () => {
+    let token = '';
+    test('auth actions succeeds', async () => {
+      await request(app.getHttpServer())
+        .post('/auth/signup')
+        .send(mockCredentials)
+        .expect(201);
+      const res = await request(app.getHttpServer())
+        .post('/auth/signin')
+        .send(mockCredentials)
+        .expect(200);
+      token = JSON.parse(res.text).token;
     });
 
-    describe('/signIn (POST)', () => {
-      test('it returns 200 if password check succeeds', async () => {
-        mockUsersRepository.validateUserPassword.mockResolvedValue(
-          mockCredentials,
-        );
-        await request(app.getHttpServer())
-          .post('/auth/signin')
-          .send(mockCredentials)
-          .expect(200)
-          .then(response => {
-            expect(response.body.token.length).toBeGreaterThan(0);
-          });
+    test('task management succeeds', async () => {
+      const getRes1 = await request(app.getHttpServer())
+        .get('/tasks')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+      const originalTasks = JSON.parse(getRes1.text);
 
-        expect(mockUsersRepository.validateUserPassword).toHaveBeenCalledWith(
-          mockCredentials,
-        );
-      });
-      test('it returns 401 if password check fails', async () => {
-        mockUsersRepository.validateUserPassword.mockResolvedValue(null);
-        await request(app.getHttpServer())
-          .post('/auth/signin')
-          .send(mockCredentials)
-          .expect(401);
+      const createRes = await request(app.getHttpServer())
+        .post('/tasks')
+        .set('Authorization', `Bearer ${token}`)
+        .send(mockTaskDTO)
+        .expect(201);
+      const newTask = JSON.parse(createRes.text);
 
-        expect(mockUsersRepository.validateUserPassword).toHaveBeenCalledWith(
-          mockCredentials,
-        );
-      });
+      const getRes2 = await request(app.getHttpServer())
+        .get('/tasks')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+      const currentTasks = JSON.parse(getRes2.text);
+
+      expect(currentTasks.length).toBe(originalTasks.length + 1);
+      expect(currentTasks.find(task => task.id === newTask.id)).toBeTruthy();
+
+      const getRes3 = await request(app.getHttpServer())
+        .get(`/tasks/${newTask.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+      const taskById = JSON.parse(getRes3.text);
+      expect(taskById.title).toBe(mockTaskDTO.title);
     });
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
+    await tasksRepository.delete({ title: mockTaskDTO.title });
+    await usersRepository.delete({ email: mockCredentials.email });
     await app.close();
   });
 });
