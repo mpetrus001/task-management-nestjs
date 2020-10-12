@@ -1,6 +1,6 @@
 # Task Management Project
 
-A simple task management REST API buitl with NestJS.
+A simple task management REST API built with NestJS.
 
 ## Description
 
