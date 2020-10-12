@@ -5,7 +5,7 @@ export default registerAs(
   'typeOrmConfig',
   (): TypeOrmModuleOptions => ({
     type: 'postgres',
-    host: 'localhost',
+    host: process.env.POSTGRES_HOST || 'localhost',
     port: parseInt(process.env.POSTGRES_PORT, 10) || 5432,
     username: process.env.POSTGRES_USER || 'admin',
     password: process.env.POSTGRES_PASSWORD || 'admin',
