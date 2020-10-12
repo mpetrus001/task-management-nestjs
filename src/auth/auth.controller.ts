@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   HttpCode,
+  Logger,
   Post,
   UseInterceptors,
   ValidationPipe,
@@ -14,6 +15,7 @@ import { LoggingInterceptor } from './interceptor/logging.interceptor';
 @UseInterceptors(LoggingInterceptor)
 export class AuthController {
   constructor(private authService: AuthService) {}
+  private logger = new Logger('AuthController');
 
   @Post('/signup')
   signUp(@Body(ValidationPipe) authCredentialsDTO: AuthCredentialsDTO) {
