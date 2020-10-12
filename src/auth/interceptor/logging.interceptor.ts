@@ -6,8 +6,8 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
@@ -25,6 +25,13 @@ export class LoggingInterceptor implements NestInterceptor {
             httpResponse.statusCode
           } ${Date.now() - now}ms`,
         );
+      }),
+      catchError(err => {
+        this.logger.warn(`${context.getHandler().name} failed: ${err.message}`);
+        this.logger.log(
+          `${context.getHandler().name} failed ${Date.now() - now}ms`,
+        );
+        return throwError(err);
       }),
     );
   }

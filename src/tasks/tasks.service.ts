@@ -1,17 +1,23 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTaskDTO } from './dto/create-task.dto';
 import { UpdateTaskDTO } from './dto/update-task.dto';
 import { GetTasksFilterDTO } from './dto/get-tasks-filter.dto';
 import { TasksRepository } from './tasks.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/auth/users.entity';
+import { Task } from './tasks.entity';
 
 @Injectable()
 export class TasksService {
   constructor(
     @InjectRepository(TasksRepository) private tasksRepository: TasksRepository,
   ) {}
-  // TODO add logging
+  private logger = new Logger('TasksService');
 
   getTasks(filterDTO: GetTasksFilterDTO, user: User) {
     return this.tasksRepository.getTasks(filterDTO, user);
@@ -21,7 +27,11 @@ export class TasksService {
     const task = await this.tasksRepository.findOne({
       where: { id, userId: user.id },
     });
-    if (!task) throw new NotFoundException('Task could not be found');
+    if (!task) {
+      this.logger.warn(`Get task failed for taskID: ${id}`);
+      throw new NotFoundException('Task could not be found');
+    }
+    this.logger.verbose(`Get task succeeded for taskID: ${id}`);
     return task;
   }
 
@@ -34,16 +44,36 @@ export class TasksService {
       id,
       userId: user.id,
     });
-    if (affected === 0) throw new NotFoundException('Task could not be found');
+    if (affected === 0) {
+      this.logger.warn(`Delete task failed for taskID: ${id}`);
+      throw new NotFoundException('Task could not be found');
+    }
+    this.logger.log(`Delete task succeeded for taskID: ${id}`);
   }
 
   async updateTaskById(id: number, updateTaskDTO: UpdateTaskDTO, user: User) {
-    const updatedTask = await this.getTaskById(id, user);
+    let updatedTask: Task;
+    try {
+      updatedTask = await this.getTaskById(id, user);
+    } catch (error) {
+      this.logger.warn(`Update task failed for taskID: ${id}`);
+      throw error;
+    }
     for (const prop in updateTaskDTO) {
       if (updatedTask.hasOwnProperty(prop)) {
         updatedTask[prop] = updateTaskDTO[prop];
+      } else {
+        this.logger.warn(
+          `Failed to update property: ${prop} does not exist on task`,
+        );
       }
     }
-    return await updatedTask.save();
+    try {
+      this.logger.verbose(`Updating task for taskID: ${updatedTask.id}`);
+      return await updatedTask.save();
+    } catch (error) {
+      this.logger.warn(`Update task failed for taskID: ${id}`);
+      throw new InternalServerErrorException('Unexpected error updating task');
+    }
   }
 }

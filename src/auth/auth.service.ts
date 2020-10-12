@@ -1,4 +1,9 @@
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthCredentialsDTO } from './dto/auth-credentials.dto';
@@ -10,30 +15,50 @@ export class AuthService {
     @InjectRepository(UsersRepository) private usersRepository: UsersRepository,
     private jwtService: JwtService,
   ) {}
-  // TODO expand logging
   private logger = new Logger('AuthService');
 
-  signUp(authCredentialsDTO: AuthCredentialsDTO) {
-    return this.usersRepository.signUp(authCredentialsDTO);
+  async signUp(authCredentialsDTO: AuthCredentialsDTO) {
+    try {
+      const result = await this.usersRepository.signUp(authCredentialsDTO);
+      if (!result) {
+        this.logger.warn(
+          `User signup failed - result: ${JSON.stringify(result)}`,
+        );
+        throw new InternalServerErrorException(
+          'Unexpected error while performing signUp',
+        );
+      }
+      return this.generateToken(result);
+    } catch (error) {
+      throw error;
+    }
   }
 
   async signIn(authCredentialsDTO: AuthCredentialsDTO) {
     const result = await this.usersRepository.validateUserPassword(
       authCredentialsDTO,
     );
-    if (!result)
+    if (!result) {
       this.logger.warn(
-        `Attempted signIn failed with dto ${JSON.stringify(
-          authCredentialsDTO,
-        )}`,
+        `Attempted signIn failed for ${authCredentialsDTO.email}`,
       );
-    if (!result) throw new UnauthorizedException('Invalid credentials');
-    const { email } = result;
-    const payload = { email };
-    const token = await this.jwtService.sign(payload);
-    this.logger.log(`Generated token with payload ${JSON.stringify(payload)}`);
+      throw new UnauthorizedException('Invalid credentials');
+    }
+    return this.generateToken(result);
+  }
 
-    return { token };
+  async generateToken(payload: any) {
+    try {
+      const { email } = payload;
+      const token = await this.jwtService.sign({ email });
+      this.logger.verbose(`Generated token for ${email}`);
+      return { token };
+    } catch (error) {
+      this.logger.warn(`Generate token failed - ${error.message}`);
+      throw new InternalServerErrorException(
+        'Unexpected error while performing signIn',
+      );
+    }
   }
 }
 
