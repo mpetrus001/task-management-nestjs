@@ -49,6 +49,7 @@ export class TasksService {
       throw new NotFoundException('Task could not be found');
     }
     this.logger.log(`Delete task succeeded for taskID: ${id}`);
+    return { id };
   }
 
   async updateTaskById(id: number, updateTaskDTO: UpdateTaskDTO, user: User) {

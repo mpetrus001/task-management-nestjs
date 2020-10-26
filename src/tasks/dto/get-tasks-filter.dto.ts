@@ -1,14 +1,14 @@
 import { IsOptional } from 'class-validator';
 
-// TODO support better types
+// TODO support better types and validation
 // sort=["title","ASC"]&range=[0, 24]&filter={"title":"bar"}
 export class GetTasksFilterDTO {
   @IsOptional()
-  sort: string[];
+  sort: string;
 
   @IsOptional()
-  range: number[];
+  range: string;
 
   @IsOptional()
-  filter: { [prop: string]: string };
+  filter: string;
 }

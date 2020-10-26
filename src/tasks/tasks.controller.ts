@@ -5,17 +5,14 @@ import {
   Get,
   Param,
   ParseIntPipe,
-  Patch,
+  Put,
   Post,
   Query,
   UseGuards,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
-  Response,
-  SetMetadata,
 } from '@nestjs/common';
-import { Response as Res } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUserFromReq } from '../auth/decorator/get-user.decorator';
 import { User } from '../auth/users.entity';
@@ -59,7 +56,7 @@ export class TasksController {
     return this.tasksService.createTask(createTaskDTO, user);
   }
 
-  @Patch('/:id')
+  @Put('/:id')
   updateTaskById(
     @Param('id', ParseIntPipe) id: number,
     @Body(TaskStatusValidationPipe) updateTaskDTO: UpdateTaskDTO,

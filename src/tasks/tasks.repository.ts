@@ -11,21 +11,29 @@ export class TasksRepository extends Repository<Task> {
 
   async getTasks(filterDTO: GetTasksFilterDTO, user: User) {
     // const { status, search } = filterDTO;
+    const { sort, range, filter } = filterDTO;
     const query = this.createQueryBuilder('task');
     this.logger.verbose(`Getting tasks for ${user.email}`);
     query.where('task.userId = :userId', { userId: user.id });
 
-    // if (status) {
-    //   this.logger.verbose(`Adding status ${status} to task query`);
-    //   query.andWhere('task.status = :status', { status });
-    // }
-    // if (search) {
-    //   this.logger.verbose(`Adding terms ${search} to task query`);
-    //   query.andWhere(
-    //     '(task.title LIKE :search OR task.description LIKE :search)',
-    //     { search: `%${search}%` },
-    //   );
-    // }
+    if (sort) {
+      this.logger.verbose(`Adding sort ${sort} to task query`);
+      const parsedSort: [string, 'ASC' | 'DESC'] = JSON.parse(sort);
+      query.orderBy(parsedSort[0], parsedSort[1]);
+    }
+
+    if (range) {
+      this.logger.verbose(`Adding range ${range} to task query`);
+      const parsedRange: [number, number] = JSON.parse(range);
+      query.skip(parsedRange[0]).take(parsedRange[1]);
+    }
+
+    if (range) {
+      this.logger.verbose(`Adding filter ${filter} to task query`);
+      const parsedFilter: { [prop: string]: string } = JSON.parse(filter);
+      query.where(parsedFilter);
+    }
+
     try {
       const tasks = await query.getMany();
       this.logger.log(`Retrieved ${tasks.length} tasks for ${user.email}`);
