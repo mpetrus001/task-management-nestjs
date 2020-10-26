@@ -12,7 +12,10 @@ import {
   UseInterceptors,
   UsePipes,
   ValidationPipe,
+  Response,
+  SetMetadata,
 } from '@nestjs/common';
+import { Response as Res } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUserFromReq } from '../auth/decorator/get-user.decorator';
 import { User } from '../auth/users.entity';
@@ -20,6 +23,7 @@ import { CreateTaskDTO } from './dto/create-task.dto';
 import { GetTasksFilterDTO } from './dto/get-tasks-filter.dto';
 import { UpdateTaskDTO } from './dto/update-task.dto';
 import { LoggingInterceptor } from './interceptor/logging.interceptor';
+import { ResponseHeaderInterceptor } from './interceptor/res-headers.interceptor';
 import { TaskStatusValidationPipe } from './pipe/task-status-validation.pipe';
 import { TasksService } from './tasks.service';
 
@@ -30,8 +34,9 @@ export class TasksController {
   constructor(private tasksService: TasksService) {}
 
   @Get()
+  @UseInterceptors(ResponseHeaderInterceptor)
   getTasks(
-    @Query(ValidationPipe) filterDTO: GetTasksFilterDTO,
+    @Query() filterDTO: GetTasksFilterDTO,
     @GetUserFromReq() user: User,
   ) {
     return this.tasksService.getTasks(filterDTO, user);

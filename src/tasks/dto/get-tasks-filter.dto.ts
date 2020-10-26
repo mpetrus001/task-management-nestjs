@@ -1,12 +1,14 @@
-import { IsIn, IsNotEmpty, IsOptional } from 'class-validator';
-import { Task } from '../tasks.entity';
+import { IsOptional } from 'class-validator';
 
+// TODO support better types
+// sort=["title","ASC"]&range=[0, 24]&filter={"title":"bar"}
 export class GetTasksFilterDTO {
   @IsOptional()
-  @IsIn(['OPEN', 'IN_PROGRESS', 'DONE'])
-  status: Task['status'];
+  sort: string[];
 
   @IsOptional()
-  @IsNotEmpty()
-  search: string;
+  range: number[];
+
+  @IsOptional()
+  filter: { [prop: string]: string };
 }

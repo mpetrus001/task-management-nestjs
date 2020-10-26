@@ -10,22 +10,22 @@ export class TasksRepository extends Repository<Task> {
   private logger = new Logger('TasksRepository');
 
   async getTasks(filterDTO: GetTasksFilterDTO, user: User) {
-    const { status, search } = filterDTO;
+    // const { status, search } = filterDTO;
     const query = this.createQueryBuilder('task');
     this.logger.verbose(`Getting tasks for ${user.email}`);
     query.where('task.userId = :userId', { userId: user.id });
 
-    if (status) {
-      this.logger.verbose(`Adding status ${status} to task query`);
-      query.andWhere('task.status = :status', { status });
-    }
-    if (search) {
-      this.logger.verbose(`Adding terms ${search} to task query`);
-      query.andWhere(
-        '(task.title LIKE :search OR task.description LIKE :search)',
-        { search: `%${search}%` },
-      );
-    }
+    // if (status) {
+    //   this.logger.verbose(`Adding status ${status} to task query`);
+    //   query.andWhere('task.status = :status', { status });
+    // }
+    // if (search) {
+    //   this.logger.verbose(`Adding terms ${search} to task query`);
+    //   query.andWhere(
+    //     '(task.title LIKE :search OR task.description LIKE :search)',
+    //     { search: `%${search}%` },
+    //   );
+    // }
     try {
       const tasks = await query.getMany();
       this.logger.log(`Retrieved ${tasks.length} tasks for ${user.email}`);
