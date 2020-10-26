@@ -28,7 +28,11 @@ export class TasksRepository extends Repository<Task> {
       query.skip(parsedRange[0]).take(parsedRange[1]);
     }
 
+<<<<<<< HEAD
     if (range) {
+=======
+    if (filter) {
+>>>>>>> implement basic range/filter/sort in getAllTasks from TasksRepo
       this.logger.verbose(`Adding filter ${filter} to task query`);
       const parsedFilter: { [prop: string]: string } = JSON.parse(filter);
       query.where(parsedFilter);
