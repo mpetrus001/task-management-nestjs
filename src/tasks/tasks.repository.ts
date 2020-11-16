@@ -12,6 +12,7 @@ export class TasksRepository extends Repository<Task> {
   async getTasks(filterDTO: GetTasksFilterDTO, user: User) {
     // const { status, search } = filterDTO;
     const { sort, range, filter } = filterDTO;
+    let count = 0;
     const query = this.createQueryBuilder('task');
     this.logger.verbose(`Getting tasks for ${user.email}`);
     query.where('task.userId = :userId', { userId: user.id });
@@ -36,12 +37,14 @@ export class TasksRepository extends Repository<Task> {
       this.logger.verbose(`Adding filter ${filter} to task query`);
       const parsedFilter: { [prop: string]: string } = JSON.parse(filter);
       query.where(parsedFilter);
+      count = await this.count(parsedFilter);
     }
 
     try {
       const tasks = await query.getMany();
+
       this.logger.log(`Retrieved ${tasks.length} tasks for ${user.email}`);
-      return tasks;
+      return { data: tasks, count };
     } catch (error) {
       this.logger.error(`Failed to get tasks for ${user.email}`);
       throw new InternalServerErrorException();

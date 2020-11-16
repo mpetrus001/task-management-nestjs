@@ -15,11 +15,11 @@ export class ResponseHeaderInterceptor implements NestInterceptor {
     const httpRequest = httpContext.getRequest<Request>();
     const httpResponse = httpContext.getResponse<Response>();
     return next.handle().pipe(
-      map(data => {
-        if (Array.isArray(data)) {
+      map(({ data, count }) => {
+        if (count) {
           httpResponse.setHeader(
             'Content-Range',
-            `${httpRequest.url.split('/')[1]} 0-${data.length}/${data.length}`,
+            `${httpRequest.url.split('/')[1]} 0-${data.length}/${count}`,
           );
         }
         return data;
