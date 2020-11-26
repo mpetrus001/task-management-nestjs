@@ -10,41 +10,36 @@ export class TasksRepository extends Repository<Task> {
   private logger = new Logger('TasksRepository');
 
   async getTasks(filterDTO: GetTasksFilterDTO, user: User) {
-    // const { status, search } = filterDTO;
     const { sort, range, filter } = filterDTO;
-    let count = 0;
     const query = this.createQueryBuilder('task');
     this.logger.verbose(`Getting tasks for ${user.email}`);
     query.where('task.userId = :userId', { userId: user.id });
 
     if (sort) {
-      this.logger.verbose(`Adding sort ${sort} to task query`);
-      const parsedSort: [string, 'ASC' | 'DESC'] = JSON.parse(sort);
-      query.orderBy(parsedSort[0], parsedSort[1]);
+      this.logger.verbose(`Adding sort ${JSON.stringify(sort)} to task query`);
+      query.orderBy(sort[0], sort[1]);
     }
 
     if (range) {
-      this.logger.verbose(`Adding range ${range} to task query`);
-      const parsedRange: [number, number] = JSON.parse(range);
-      query.skip(parsedRange[0]).take(parsedRange[1]);
+      this.logger.verbose(
+        `Adding range ${JSON.stringify(range)} to task query`,
+      );
+      const limit = range[1] - range[0] + 1; // necessary to convert range query to a limit query.
+      query.skip(range[0]).take(limit); // This will skip the first # users and take limit of users after them.
     }
 
-<<<<<<< HEAD
-    if (range) {
-=======
     if (filter) {
->>>>>>> implement basic range/filter/sort in getAllTasks from TasksRepo
-      this.logger.verbose(`Adding filter ${filter} to task query`);
-      const parsedFilter: { [prop: string]: string } = JSON.parse(filter);
-      query.where(parsedFilter);
-      count = await this.count(parsedFilter);
+      this.logger.verbose(
+        `Adding filter ${JSON.stringify(filter)} to task query`,
+      );
+      query.where(filter);
     }
 
     try {
       const tasks = await query.getMany();
 
       this.logger.log(`Retrieved ${tasks.length} tasks for ${user.email}`);
-      return { data: tasks, count };
+      return tasks;
     } catch (error) {
       this.logger.error(`Failed to get tasks for ${user.email}`);
       throw new InternalServerErrorException();

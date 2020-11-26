@@ -21,6 +21,7 @@ import { GetTasksFilterDTO } from './dto/get-tasks-filter.dto';
 import { UpdateTaskDTO } from './dto/update-task.dto';
 import { LoggingInterceptor } from './interceptor/logging.interceptor';
 import { ResponseHeaderInterceptor } from './interceptor/res-headers.interceptor';
+import { TaskFilterParsePipe } from './pipe/task-filter-parse.pipe';
 import { TaskStatusValidationPipe } from './pipe/task-status-validation.pipe';
 import { TasksService } from './tasks.service';
 
@@ -33,7 +34,8 @@ export class TasksController {
   @Get()
   @UseInterceptors(ResponseHeaderInterceptor)
   getTasks(
-    @Query() filterDTO: GetTasksFilterDTO,
+    @Query(TaskFilterParsePipe, ValidationPipe)
+    filterDTO: GetTasksFilterDTO,
     @GetUserFromReq() user: User,
   ) {
     return this.tasksService.getTasks(filterDTO, user);

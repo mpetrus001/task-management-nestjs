@@ -19,8 +19,15 @@ export class TasksService {
   ) {}
   private logger = new Logger('TasksService');
 
-  getTasks(filterDTO: GetTasksFilterDTO, user: User) {
-    return this.tasksRepository.getTasks(filterDTO, user);
+  async getTasks(filterDTO: GetTasksFilterDTO, user: User) {
+    const { range, filter } = filterDTO;
+    const data = await this.tasksRepository.getTasks(filterDTO, user);
+    const count = await this.tasksRepository.count({
+      ...filter,
+      userId: user.id,
+    });
+    // Reflects the range back so that it can be set on the Content-Range header
+    return { data, range, count };
   }
 
   async getTaskById(id: number, user: User) {
