@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
-import { IsEnum, IsInt, IsString, validateSync } from 'class-validator';
+import { IsEnum, IsString, validateSync } from 'class-validator';
 
 const logger = new Logger('Bootstrap');
 
@@ -44,10 +44,9 @@ export function validateENV(config: Record<string, unknown>) {
   logger.log(
     `Loaded ENV: ${JSON.stringify({
       NODE_ENV,
+      API_PORT,
       POSTGRES_USER,
-      POSTGRES_PASSWORD: '***',
       POSTGRES_DB,
-      JWT_SECRET: '***',
     })}`,
   );
 

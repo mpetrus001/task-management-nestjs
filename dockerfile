@@ -2,7 +2,7 @@
 
 FROM node:latest
 
-ENV NODE_EN=production
+ENV NODE_ENV=production
 
 WORKDIR /app
 
