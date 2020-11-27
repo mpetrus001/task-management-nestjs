@@ -9,7 +9,7 @@ import { UpdateTaskDTO } from './dto/update-task.dto';
 import { GetTasksFilterDTO } from './dto/get-tasks-filter.dto';
 import { TasksRepository } from './tasks.repository';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/auth/users.entity';
+import { User } from '../auth/users.entity';
 import { Task } from './tasks.entity';
 
 @Injectable()

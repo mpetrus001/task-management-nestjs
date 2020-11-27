@@ -34,7 +34,7 @@ For developement you will need the following installed
 1. Clone the repo
 
 ```bash
-$ git clone git@github.com:mpetrus001/nestjs-zero-to-hero.git
+$ git clone git@github.com:mpetrus001/task-management-nestjs.git
 ```
 
 1. Build the image
@@ -43,6 +43,7 @@ $ git clone git@github.com:mpetrus001/nestjs-zero-to-hero.git
 $ docker build -t <image_name> .
 ```
 
+1. Enter <image_name> into the docker-compose file
 1. Check your environment variables
 
 ```bash
@@ -61,7 +62,7 @@ $ docker-compose up
 1. Clone the repo
 
 ```bash
-$ git clone git@github.com:mpetrus001/nestjs-zero-to-hero.git
+$ git clone git@github.com:mpetrus001/task-management-nestjs.git
 ```
 
 1. Install dependencies

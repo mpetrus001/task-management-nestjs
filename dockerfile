@@ -1,9 +1,17 @@
 FROM node:latest
 
-COPY . .
+ENV NODE_EN=production
 
-RUN npm install
+WORKDIR /app
+
+COPY ["package.json", "package-lock.json", "./"]
+
+RUN npm install --production
+
+COPY ["./src", "nest-cli.json", "tsconfig.json", "tsconfig.build.json", "./"]
 
 RUN npm run build
 
-CMD npm run start
+EXPOSE 3000
+
+CMD ["node", "dist/main.js"]

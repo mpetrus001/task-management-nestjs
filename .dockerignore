@@ -4,3 +4,10 @@ db
 *.sample
 dist
 test
+.eslintrc
+.gitignore
+.prettierrc
+docker-compose.dev.yml
+docker-compose.yml
+dockerfile
+LICENSE
