@@ -15,9 +15,6 @@ class EnvironmentVariables {
   @IsEnum(Environment)
   NODE_ENV: Environment;
 
-  @IsInt()
-  API_PORT: number;
-
   @IsString()
   POSTGRES_USER: string;
 
@@ -48,7 +45,6 @@ export function validateENV(config: Record<string, unknown>) {
   logger.log(
     `Loaded ENV: ${JSON.stringify({
       NODE_ENV,
-      API_PORT,
       POSTGRES_USER,
       POSTGRES_PASSWORD: '***',
       POSTGRES_DB,
