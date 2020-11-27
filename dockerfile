@@ -1,3 +1,5 @@
+#  docker build -t mpetrus/task-management-nestjs:latest .
+
 FROM node:latest
 
 ENV NODE_EN=production

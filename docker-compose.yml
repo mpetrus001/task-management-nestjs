@@ -3,7 +3,7 @@ version: '3.1'
 
 services:
   db:
-    image: postgres
+    image: postgres:latest
     volumes:
       - ./db/postgres-data:/var/lib/postgresql/data
     environment:
@@ -12,7 +12,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
 
   app:
-    image: mpetrus/task-management-nestjs:1
+    image: mpetrus/task-management-nestjs:latest
     depends_on:
       - db
     ports:
