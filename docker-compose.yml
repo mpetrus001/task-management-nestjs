@@ -18,6 +18,7 @@ services:
     ports:
       - ${API_PORT}:3000
     environment:
+      NODE_ENV: production
       POSTGRES_HOST: db
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
