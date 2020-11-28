@@ -28,6 +28,7 @@ export class TasksRepository extends Repository<Task> {
       query.skip(range[0]).take(limit); // This will skip the first # users and take limit of users after them.
     }
 
+    // TODO add support for search filter in format - filter {"q":"first","description":"search term"}
     if (filter) {
       this.logger.verbose(
         `Adding filter ${JSON.stringify(filter)} to task query`,
