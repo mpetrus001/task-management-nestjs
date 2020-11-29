@@ -12,8 +12,6 @@ export class TasksRepository extends Repository<Task> {
   async getTasks(filterDTO: GetTasksFilterDTO, user: User) {
     const { sort, range, filter } = filterDTO;
     const query = this.createQueryBuilder('task');
-    this.logger.verbose(`Getting tasks for ${user.email}`);
-    query.where('task.userId = :userId', { userId: user.id });
 
     if (sort) {
       this.logger.verbose(`Adding sort ${JSON.stringify(sort)} to task query`);
@@ -33,9 +31,11 @@ export class TasksRepository extends Repository<Task> {
       this.logger.verbose(
         `Adding filter ${JSON.stringify(filter)} to task query`,
       );
-      query.where(filter);
+      // query.where(filter);
     }
 
+    this.logger.verbose(`Getting tasks for ${user.email}`);
+    query.where('task.userId = :userId', { userId: user.id });
     try {
       const tasks = await query.getMany();
 
