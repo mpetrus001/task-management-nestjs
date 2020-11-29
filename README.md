@@ -8,7 +8,7 @@ The project is a simple task management REST API. By using the API endpoints, a 
 
 The REST API is a Node app written using the NestJS server platform. NestJS implements a Module-Controller-Service architecture often seen in production-level apps. User authentication is handled with Passport and JWT in a Bearer Auth configuration. Entities are persisted to a postgres database using a Repository pattern with TypeORM.
 
-A frontend SPA using React has yet to be built, but is coming soon! See [Task-Management-React](https://github.com/mpetrus001/task-management-react) for more details.
+A frontend SPA using React-Admin has been built; see [Task-Management-React](https://github.com/mpetrus001/task-management-react) for more details.
 
 The project started by completing the coursework for [NestJS Zero To Hero](https://www.udemy.com/course/nestjs-zero-to-hero) with Ariel Weinberger. Completion of the course resulted in an API server about 90% ready for production. Additional features were added to the server and the project was "dockerized".
 
