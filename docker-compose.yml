@@ -11,15 +11,13 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
 
-  app:
+  api:
     image: mpetrus/task-management-nestjs:latest
     depends_on:
       - db
     ports:
-      - ${API_PORT}:3000
+      - 3000:3000
     environment:
-      NODE_ENV: production
-      API_PORT: ${API_PORT}
       POSTGRES_HOST: db
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
