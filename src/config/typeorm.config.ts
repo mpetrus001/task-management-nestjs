@@ -1,19 +1,18 @@
 import { registerAs } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-// TODO change defaults to only apply in development
-
 export default registerAs(
   'typeOrmConfig',
   (): TypeOrmModuleOptions => ({
     type: 'postgres',
-    host: process.env.POSTGRES_HOST || 'localhost',
+    host: process.env.POSTGRES_HOST,
     port: 5432,
-    username: process.env.POSTGRES_USER || 'admin',
-    password: process.env.POSTGRES_PASSWORD || 'admin',
-    database: process.env.POSTGRES_DB || 'db',
+    username: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    database: process.env.POSTGRES_DB,
     entities: [__dirname + '/../**/*.entity.{js,ts}'],
-    // TODO figure out how to not use sync in production
-    synchronize: true,
+    migrations: [__dirname + '/../migrations/*.{js,ts}'],
+    migrationsRun: process.env.NODE_ENV == 'production',
+    synchronize: process.env.NODE_ENV !== 'production',
   }),
 );
