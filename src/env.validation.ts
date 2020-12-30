@@ -6,9 +6,6 @@ const logger = new Logger('Bootstrap');
 
 class EnvironmentVariables {
   @IsString()
-  POSTGRES_HOST: string;
-
-  @IsString()
   POSTGRES_USER: string;
 
   @IsString()
